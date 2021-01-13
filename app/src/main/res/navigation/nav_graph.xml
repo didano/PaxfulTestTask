@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/jokesListFragment">
+
+    <fragment
+        android:id="@+id/jokesListFragment"
+        android:name="com.example.paxfultesttask.presentation.jokeslist.JokesListFragment"
+        android:label="JokesListFragment" />
+    <fragment
+        android:id="@+id/myJokesFragment"
+        android:name="com.example.paxfultesttask.presentation.myjokes.MyJokesFragment"
+        android:label="fragment_my_jokes"
+        tools:layout="@layout/fragment_my_jokes" />
+    <action
+        android:id="@+id/action_global_jokesListFragment"
+        app:destination="@id/jokesListFragment"
+        app:popUpTo="@id/nav_graph" />
+    <action
+        android:id="@+id/action_global_myJokesFragment"
+        app:destination="@id/myJokesFragment"
+        app:popUpTo="@id/jokesListFragment"/>
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.example.paxfultesttask.presentation.settings.SettingsFragment"
+        android:label="SettingsFragment" />
+    <action
+        android:id="@+id/action_global_settingsFragment"
+        app:destination="@id/settingsFragment"
+        app:popUpTo="@id/jokesListFragment" />
+
+</navigation>
