@@ -71,7 +71,7 @@ class JokesListFragment : Fragment() {
         }
     }
 
-    fun initClickListener(){
+    private fun initClickListener(){
         jokesAdapter.onButtonClickListener = object : JokesListAdapter.OnButtonClickListener{
             override fun onShareButtonClick(jokeText: String) {
                 val intent = Intent().apply {
@@ -90,7 +90,7 @@ class JokesListFragment : Fragment() {
         }
     }
 
-    fun validateName(firstName:String, lastName:String){
+    private fun validateName(firstName:String, lastName:String){
         if(firstName.isNotEmpty() && lastName.isNotEmpty()){
             vm.fillLiveDataWithNamedJokes(firstName,lastName)
         } else if(firstName.isNotEmpty()){

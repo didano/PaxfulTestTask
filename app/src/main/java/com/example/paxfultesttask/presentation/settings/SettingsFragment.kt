@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.paxfultesttask.R
@@ -23,9 +24,12 @@ class SettingsFragment : Fragment() {
     var tempPref = JokesPreferences()
 
     private val observer = Observer<JokesPreferences> {
-        charLastName.setText(it.lastName)
-        charFirstName.setText(it.firstName)
         switchOfflineMode.isChecked = it.offlineMode.equals(1)
+        tempPref.lastName = it.lastName
+        tempPref.firstName = it.firstName
+        tempPref.offlineMode = it.offlineMode
+        charFirstName.hint = tempPref.firstName
+        charLastName.hint = tempPref.lastName
     }
 
 
@@ -39,21 +43,29 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         vm.jokePrefs.observe(viewLifecycleOwner, observer)
         vm.initPref()
+        initFieldsData()
         initListeners()
     }
 
-    override fun onPause() {
-        super.onPause()
+    private fun initFieldsData() {
+        charFirstName.hint = tempPref.firstName
+        charFirstName.hint = tempPref.lastName
+    }
+
+    override fun onStop() {
+        super.onStop()
         vm.changePref(tempPref)
     }
 
     private fun initListeners(){
-        charFirstName.addTextChangedListener {
+        charFirstName.addTextChangedListener{
             tempPref.firstName = it.toString()
+            vm.changePref(tempPref)
         }
 
-        charLastName.addTextChangedListener {
-            tempPref.lastName = it.toString()
+        charLastName.doOnTextChanged { text, start, before, count ->
+            tempPref.lastName = text.toString()
+            vm.changePref(tempPref)
         }
 
         switchOfflineMode.setOnCheckedChangeListener { button, checked ->
@@ -62,6 +74,7 @@ class SettingsFragment : Fragment() {
             } else {
                 tempPref.offlineMode = 0
             }
+            vm.changePref(tempPref)
         }
     }
 }

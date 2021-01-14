@@ -36,7 +36,6 @@ class JokesListViewModel(val context: Context) : ViewModel() {
             }
             viewModelScope.launch(Main) {
                 jokeTextLiveData.value = result
-                val dbresult = db.jokesDao().getAllJokes()
             }
         }
     }
@@ -87,9 +86,6 @@ class JokesListViewModel(val context: Context) : ViewModel() {
     fun likeJoke(joke: Joke) {
         viewModelScope.launch(IO) {
             db.myJokesDao().addJokeToLiked(joke.getMyJoke())
-            viewModelScope.launch(Main) {
-                val result = db.myJokesDao().getAllLikedJokes()
-            }
         }
     }
 
