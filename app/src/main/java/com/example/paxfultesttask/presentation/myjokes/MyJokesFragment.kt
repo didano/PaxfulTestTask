@@ -8,16 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.core.domain.MyJoke
+import com.example.paxfultesttask.data.models.MyJoke
 import com.example.paxfultesttask.presentation.AddJokeDialog
 import com.example.paxfultesttask.presentation.myjokes.adapter.MyJokesRecyclerAdapter
 import kotlinx.android.synthetic.main.fragment_my_jokes.*
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.dsl.module
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-val myJokesFragmentModule = module {
-    factory { MyJokesFragment() }
-}
 
 class MyJokesFragment : Fragment() {
 
@@ -39,7 +35,6 @@ class MyJokesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         vm.myJokesLiveData.observe(viewLifecycleOwner, observer)
-        vm.fillMyJokesLiveData()
         myJokesRecyclerView.apply {
             adapter = myJokesAdapter
             layoutManager = LinearLayoutManager(requireContext())
@@ -57,6 +52,11 @@ class MyJokesFragment : Fragment() {
         createNewJoke.setOnClickListener {
             showDialog()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        vm.fillMyJokesLiveData()
     }
 
     private fun showDialog() {

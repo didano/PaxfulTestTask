@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.paxfultesttask.data.models.Joke
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.core.domain.Joke
 import kotlinx.android.synthetic.main.joke_item.view.*
 
 class JokesListAdapter() :
@@ -44,7 +44,7 @@ class JokesListAdapter() :
 
     interface OnButtonClickListener {
         fun onShareButtonClick(jokeText:String)
-        fun onLikeButtonClick(joke:Joke)
+        fun onLikeButtonClick(joke: Joke)
     }
 
     fun newList(list: List<Joke>){

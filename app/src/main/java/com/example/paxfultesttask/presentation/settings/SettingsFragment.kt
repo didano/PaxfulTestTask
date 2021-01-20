@@ -1,6 +1,7 @@
 package com.example.paxfultesttask.presentation.settings
 
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,14 +10,10 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.core.domain.JokesPreferences
+import com.example.paxfultesttask.data.models.JokesPreferences
 import kotlinx.android.synthetic.main.fragment_settings.*
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.dsl.module
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-val settingsFragmentModule = module {
-    factory { SettingsFragment() }
-}
 
 class SettingsFragment : Fragment() {
 
@@ -47,9 +44,10 @@ class SettingsFragment : Fragment() {
         initListeners()
     }
 
+
     private fun initFieldsData() {
-        charFirstName.hint = tempPref.firstName
-        charFirstName.hint = tempPref.lastName
+        charFirstName.text = SpannableStringBuilder(tempPref.firstName)
+        charFirstName.hint = SpannableStringBuilder(tempPref.lastName)
     }
 
     override fun onStop() {
@@ -63,12 +61,12 @@ class SettingsFragment : Fragment() {
             vm.changePref(tempPref)
         }
 
-        charLastName.doOnTextChanged { text, start, before, count ->
+        charLastName.doOnTextChanged { text, _, _, _ ->
             tempPref.lastName = text.toString()
             vm.changePref(tempPref)
         }
 
-        switchOfflineMode.setOnCheckedChangeListener { button, checked ->
+        switchOfflineMode.setOnCheckedChangeListener { _, checked ->
             if (checked) {
                 tempPref.offlineMode = 1
             } else {

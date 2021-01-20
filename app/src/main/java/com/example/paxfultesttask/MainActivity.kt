@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        title = "Jokes List"
         toggle = ActionBarDrawerToggle(
             this,
             root,
@@ -26,9 +27,15 @@ class MainActivity : AppCompatActivity() {
         navigation_view.setNavigationItemSelectedListener {
             if (it.itemId == R.id.navMyJokes) {
                 fragment.findNavController().navigate(R.id.action_global_myJokesFragment)
+                title = "My Jokes"
                 root.close()
             } else if(it.itemId == R.id.navSettings){
                 fragment.findNavController().navigate(R.id.action_global_settingsFragment)
+                title = "Settings Fragment"
+                root.close()
+            } else if(it.itemId == R.id.navHome){
+                fragment.findNavController().navigate(R.id.action_global_jokesListFragment)
+                title = "Jokes List"
                 root.close()
             }
             return@setNavigationItemSelectedListener true

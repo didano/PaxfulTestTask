@@ -7,8 +7,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.Window
 import android.widget.Toast
+import com.example.paxfultesttask.data.models.MyJoke
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.core.domain.MyJoke
 import kotlinx.android.synthetic.main.custom_dialog.*
 
 class AddJokeDialog(context: Context): Dialog(context) {

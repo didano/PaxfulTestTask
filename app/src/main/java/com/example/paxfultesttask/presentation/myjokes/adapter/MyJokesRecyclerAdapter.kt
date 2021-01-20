@@ -6,16 +6,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.paxfultesttask.data.models.MyJoke
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.core.domain.Joke
-import com.example.paxfultesttask.core.domain.MyJoke
 import kotlinx.android.synthetic.main.joke_item.view.jokeText
 import kotlinx.android.synthetic.main.myjoke_item.view.*
 
 class MyJokesRecyclerAdapter : RecyclerView.Adapter<MyJokesRecyclerAdapter.MyJokeViewHolder>() {
 
     private var myJokesList: List<MyJoke> = emptyList()
-    var onButtonClickListener: MyJokesRecyclerAdapter.OnDeleteButtonClickListener? = null
+    var onButtonClickListener: OnDeleteButtonClickListener? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

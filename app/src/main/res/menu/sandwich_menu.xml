@@ -4,6 +4,12 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/navHome"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="Home" />
+
         <item
             android:id="@+id/navMyJokes"
             android:icon="@drawable/ic_baseline_emoji_emotions_24"
@@ -13,6 +19,7 @@
             android:id="@+id/navSettings"
             android:icon="@drawable/ic_baseline_settings_24"
             android:title="Settings" />
+
     </group>
 
 </menu>

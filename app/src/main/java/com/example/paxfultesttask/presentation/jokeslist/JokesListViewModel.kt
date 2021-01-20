@@ -1,92 +1,74 @@
 package com.example.paxfultesttask.presentation.jokeslist
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.paxfultesttask.core.domain.Joke
-import com.example.paxfultesttask.core.domain.JokesPreferences
-import com.example.paxfultesttask.framework.api.JokesRepository
-import com.example.paxfultesttask.framework.db.JokesDatabase
+import com.example.paxfultesttask.data.models.Joke
+import com.example.paxfultesttask.data.models.JokesPreferences
+import com.example.paxfultesttask.domain.interactors.api.IApiInteractor
+import com.example.paxfultesttask.domain.interactors.db.IJokeDbInteractor
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import org.koin.android.viewmodel.dsl.viewModel
-import org.koin.dsl.module
 
-val jokesListViewModelModule = module {
-    viewModel {
-        JokesListViewModel(get())
-    }
-}
 
-class JokesListViewModel(val context: Context) : ViewModel() {
+class JokesListViewModel(
+    val dbInteractor: IJokeDbInteractor,
+    val apiInteractor: IApiInteractor
+) : ViewModel() {
 
     val jokeTextLiveData = MutableLiveData<List<Joke>>()
-
     val jokesPreferences = MutableLiveData<JokesPreferences>()
-
-    val db = JokesDatabase.getInstance(context)
 
     fun fillLiveData() {
         viewModelScope.launch(IO) {
-            val result = JokesRepository.getJokes()
+            val result = apiInteractor.getAllJokes()
             for (element in result) {
-                db.jokesDao().addJoke(element)
+                dbInteractor.addJoke(element)
             }
-            viewModelScope.launch(Main) {
-                jokeTextLiveData.value = result
-            }
+            jokeTextLiveData.postValue(result)
         }
     }
 
     fun fillLiveDataWithNamedJokes(name: String = "Chuck", lastname: String = "Norris") {
+        val value = jokesPreferences.value
         viewModelScope.launch(IO) {
-            val result = JokesRepository.getJokesBySurnameAndName(name, lastname)
+            val result = apiInteractor.getAllNamedJokes(
+                value?.firstName ?: name,
+                value?.lastName ?: lastname
+            )
             for (element in result) {
-                db.jokesDao().addJoke(element)
+                dbInteractor.addJoke(element)
             }
-            viewModelScope.launch(Main) {
-                jokeTextLiveData.value = result
-            }
+            jokeTextLiveData.postValue(result)
         }
     }
 
     fun fillLiveDataOffline() {
         viewModelScope.launch(IO) {
-            val result = db.jokesDao().getAllJokes()
-            viewModelScope.launch(Main) {
-                jokeTextLiveData.value = result
-            }
+            val result = dbInteractor.getAllJokes()
+            jokeTextLiveData.postValue(result)
         }
     }
 
     fun checkOfflineMode() {
         viewModelScope.launch(IO) {
-            val result = db.myPrefsDao().getPrefs()
-            viewModelScope.launch(Main) {
-                if (result != null) {
-                    jokesPreferences.value = result
-                } else {
-                    jokesPreferences.value = JokesPreferences()
-                }
-            }
+            val result = dbInteractor.getPreferences()
+            jokesPreferences.postValue(result)
         }
     }
 
     fun getRandomJoke() {
         viewModelScope.launch(IO) {
-            val result = db.jokesDao().getRandomJoke()
-            viewModelScope.launch(Main) {
-                jokeTextLiveData.value = result
-            }
+            val result = dbInteractor.getRandomJoke()
+            jokeTextLiveData.postValue(result)
         }
     }
 
     fun likeJoke(joke: Joke) {
         viewModelScope.launch(IO) {
-            db.myJokesDao().addJokeToLiked(joke.getMyJoke())
+            dbInteractor.likeJoke(joke)
         }
     }
+
 
 }

@@ -10,20 +10,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.core.domain.Joke
-import com.example.paxfultesttask.core.domain.JokesPreferences
+import com.example.paxfultesttask.data.models.Joke
+import com.example.paxfultesttask.data.models.JokesPreferences
 import com.example.paxfultesttask.presentation.jokeslist.adapter.JokesListAdapter
 import kotlinx.android.synthetic.main.jokes_list_fragment.*
-import org.koin.android.viewmodel.ext.android.viewModel
-import org.koin.dsl.module
-
-val jokesListFragmentModule = module {
-    factory { JokesListFragment() }
-}
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class JokesListFragment : Fragment() {
 
@@ -85,6 +81,7 @@ class JokesListFragment : Fragment() {
 
             override fun onLikeButtonClick(joke: Joke) {
                 vm.likeJoke(joke)
+                Toast.makeText(requireContext(),"Added to MyJokes",Toast.LENGTH_SHORT).show()
             }
 
         }
