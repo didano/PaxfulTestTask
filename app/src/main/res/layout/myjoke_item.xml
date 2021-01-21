@@ -9,7 +9,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp">
+        android:layout_marginTop="@dimen/small_layout_margin"
+        android:layout_marginLeft="@dimen/middle_layout_margin"
+        android:layout_marginRight="@dimen/middle_layout_margin">
 
         <TextView
             android:id="@+id/jokeText"
@@ -23,9 +25,12 @@
 
         <Button
             android:id="@+id/deleteButton"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:textColor="@color/purple_500"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_layout_margin"
+            android:background="@null"
+            android:textAllCaps="false"
             android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

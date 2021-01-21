@@ -33,19 +33,27 @@ class JokeDbInteractor(
     }
 
     override suspend fun likeJoke(joke: Joke) {
-        val result = getAllMyJokes()
+        val result = myJokesDbRepository.getAllLikedJokes()
         for (element in result){
             if(element.joke==joke.joke)
-            return
+                return
+        }
+        for (element in result){
+            if(element.id==joke.id)
+                joke.id = result.size+1
         }
         myJokesDbRepository.addJokeToLiked(joke.getMyJoke())
     }
 
     override suspend fun addOwnJoke(myJoke: MyJoke) {
-        val result = getAllMyJokes()
+        val result = myJokesDbRepository.getAllLikedJokes()
         for (element in result){
             if(element.joke==myJoke.joke)
                 return
+        }
+        for (element in result){
+            if(element.id==myJoke.id)
+                myJoke.id = result.size+1
         }
         myJokesDbRepository.addJokeToLiked(myJoke)
     }

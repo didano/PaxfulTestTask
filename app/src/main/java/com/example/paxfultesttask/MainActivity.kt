@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -14,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         title = "Jokes List"
         toggle = ActionBarDrawerToggle(
             this,
@@ -25,18 +27,22 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         navigation_view.setNavigationItemSelectedListener {
-            if (it.itemId == R.id.navMyJokes) {
-                fragment.findNavController().navigate(R.id.action_global_myJokesFragment)
-                title = "My Jokes"
-                root.close()
-            } else if(it.itemId == R.id.navSettings){
-                fragment.findNavController().navigate(R.id.action_global_settingsFragment)
-                title = "Settings Fragment"
-                root.close()
-            } else if(it.itemId == R.id.navHome){
-                fragment.findNavController().navigate(R.id.action_global_jokesListFragment)
-                title = "Jokes List"
-                root.close()
+            when (it.itemId) {
+                R.id.navMyJokes -> {
+                    fragment.findNavController().navigate(R.id.action_global_myJokesFragment)
+                    title = "My Jokes"
+                    root.close()
+                }
+                R.id.navSettings -> {
+                    fragment.findNavController().navigate(R.id.action_global_settingsFragment)
+                    title = "Settings Fragment"
+                    root.close()
+                }
+                R.id.navHome -> {
+                    fragment.findNavController().navigate(R.id.action_global_jokesListFragment)
+                    title = "Jokes List"
+                    root.close()
+                }
             }
             return@setNavigationItemSelectedListener true
         }

@@ -4,7 +4,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.paxfultesttask.data.models.Joke
-import com.example.paxfultesttask.data.models.JokesPreferences
 import com.example.paxfultesttask.domain.interactors.api.IApiInteractor
 import com.example.paxfultesttask.domain.interactors.db.IJokeDbInteractor
 import kotlinx.coroutines.Dispatchers.IO
@@ -17,50 +16,34 @@ class JokesListViewModel(
 ) : ViewModel() {
 
     val jokeTextLiveData = MutableLiveData<List<Joke>>()
-    val jokesPreferences = MutableLiveData<JokesPreferences>()
-
-    fun fillLiveData() {
-        viewModelScope.launch(IO) {
-            val result = apiInteractor.getAllJokes()
-            for (element in result) {
-                dbInteractor.addJoke(element)
-            }
-            jokeTextLiveData.postValue(result)
-        }
-    }
-
-    fun fillLiveDataWithNamedJokes(name: String = "Chuck", lastname: String = "Norris") {
-        val value = jokesPreferences.value
-        viewModelScope.launch(IO) {
-            val result = apiInteractor.getAllNamedJokes(
-                value?.firstName ?: name,
-                value?.lastName ?: lastname
-            )
-            for (element in result) {
-                dbInteractor.addJoke(element)
-            }
-            jokeTextLiveData.postValue(result)
-        }
-    }
-
-    fun fillLiveDataOffline() {
-        viewModelScope.launch(IO) {
-            val result = dbInteractor.getAllJokes()
-            jokeTextLiveData.postValue(result)
-        }
-    }
+    val isRefreshed = MutableLiveData<Boolean>()
+    var needToRefresh = false
 
     fun checkOfflineMode() {
         viewModelScope.launch(IO) {
+            isRefreshed.postValue(false)
             val result = dbInteractor.getPreferences()
-            jokesPreferences.postValue(result)
+            if (result.offlineMode == 0) {
+                needToRefresh = true
+                val response = apiInteractor.getAllNamedJokes(result.firstName, result.lastName)
+                for (element in response) {
+                    dbInteractor.addJoke(element)
+                }
+                jokeTextLiveData.postValue(response)
+            } else {
+                jokeTextLiveData.postValue(dbInteractor.getAllJokes())
+                needToRefresh = false
+            }
+            isRefreshed.postValue(true)
         }
     }
 
     fun getRandomJoke() {
         viewModelScope.launch(IO) {
+            isRefreshed.postValue(false)
             val result = dbInteractor.getRandomJoke()
             jokeTextLiveData.postValue(result)
+            isRefreshed.postValue(true)
         }
     }
 
@@ -69,6 +52,4 @@ class JokesListViewModel(
             dbInteractor.likeJoke(joke)
         }
     }
-
-
 }

@@ -10,6 +10,14 @@ class ApiInteractor(val repository:IApiRepository):IApiInteractor {
     }
 
     override suspend fun getAllNamedJokes(firstName: String, lastName: String): List<Joke> {
-        return repository.getNamedJokes(firstName,lastName)
+        if(firstName.isEmpty()&& lastName.isEmpty()){
+            return repository.getNamedJokes("Chuck","Norris")
+        } else if (firstName.isEmpty()){
+            return repository.getNamedJokes("Chuck",lastName)
+        } else if (lastName.isEmpty()) {
+            return repository.getNamedJokes(firstName,"Norris")
+        } else {
+            return repository.getNamedJokes(firstName,lastName)
+        }
     }
 }

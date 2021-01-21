@@ -15,7 +15,7 @@
     <dimen name="card_elevation">15dp</dimen>
     <dimen name="small_layout_margin">5dp</dimen>
     <dimen name="small_top_margin">4dp</dimen>
-    <dimen name="dialog_width">300dp</dimen>
+    <dimen name="dialog_width">350dp</dimen>
     <dimen name="dialog_top_margin">16dp</dimen>
-    <dimen name="dial_edittext_width">270dp</dimen>
+    <dimen name="dial_edittext_width">310dp</dimen>
 </resources>

@@ -13,19 +13,20 @@ class SettingsViewModel(val dbInteractor: IJokeDbInteractor) : ViewModel() {
 
     val jokePrefs = MutableLiveData<JokesPreferences>()
 
+    init {
+        initData()
+    }
+
+    private fun initData() {
+        viewModelScope.launch(IO) {
+            jokePrefs.postValue(dbInteractor.getPreferences())
+        }
+    }
+
+
     fun changePref(pref: JokesPreferences) {
         viewModelScope.launch(IO) {
             dbInteractor.writePreferences(pref)
-            val result = dbInteractor.getPreferences()
-            jokePrefs.postValue(result)
         }
     }
-
-    fun initPref() {
-        viewModelScope.launch(IO) {
-            val result = dbInteractor.getPreferences()
-            jokePrefs.postValue(result)
-        }
-    }
-
 }

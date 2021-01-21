@@ -24,12 +24,12 @@ interface PrefsDao {
     @Query("SELECT offlineMode FROM preferences")
     suspend fun getOfflineMod():Int
 
-    @Query("UPDATE preferences SET offlineMode = :value ")
+    @Query("UPDATE preferences SET offlineMode = :value WHERE id = 0")
     suspend fun setOfflineMod(value:Int)
 
-    @Query("UPDATE preferences SET firstName = :value ")
+    @Query("UPDATE preferences SET firstName = :value WHERE id = 0")
     suspend fun setFirstName(value:String)
 
-    @Query("UPDATE preferences SET lastName = :value ")
+    @Query("UPDATE preferences SET lastName = :value WHERE id = 0")
     suspend fun setLastName(value:String)
 }

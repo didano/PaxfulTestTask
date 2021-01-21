@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "jokes_table")
 data class Joke(
-    @PrimaryKey(autoGenerate = false)val id:Int,
+    @PrimaryKey(autoGenerate = false)var id:Int,
     @ColumnInfo(name = "jokeText")var joke: String = ""
 ) {
-    fun getMyJoke() = MyJoke(id = id,joke = joke)
+    fun getMyJoke() = MyJoke(id=id,joke = joke)
 }
