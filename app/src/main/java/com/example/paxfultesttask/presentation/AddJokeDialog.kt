@@ -8,19 +8,21 @@ import android.text.TextWatcher
 import android.view.Window
 import android.widget.Toast
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.data.models.MyJoke
+import com.example.paxfultesttask.data.models.Joke
+import com.example.paxfultesttask.presentation.myjokes.adapter.MyJokesRecyclerAdapter
 import kotlinx.android.synthetic.main.custom_dialog.*
 
-class AddJokeDialog(context: Context) : Dialog(context) {
-
-    var clickListener: OnDialogButtonClickListener? = null
+class AddJokeDialog(
+    context: Context,
+    private val clickListener: OnDialogButtonClickListener
+) : Dialog(context) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_ACTION_BAR)
         setContentView(R.layout.custom_dialog)
         cancelButton.setOnClickListener {
-            clickListener?.onCancelButtonClick()
+            clickListener.onCancelButtonClick(this)
         }
 
         val textWatcher = object : TextWatcher {
@@ -39,16 +41,12 @@ class AddJokeDialog(context: Context) : Dialog(context) {
         dialogEditText.addTextChangedListener(textWatcher)
 
         saveButton.setOnClickListener {
-            if (!dialogEditText.text.isNullOrEmpty()) {
-                clickListener?.onSaveButtonClick(MyJoke(joke = dialogEditText.text.toString()))
-            } else {
-                Toast.makeText(context, "Empty edit text!", Toast.LENGTH_SHORT).show()
-            }
+            clickListener.onSaveButtonClick(this)
         }
     }
 
     interface OnDialogButtonClickListener {
-        fun onCancelButtonClick()
-        fun onSaveButtonClick(myJoke: MyJoke)
+        fun onCancelButtonClick(dialog:AddJokeDialog)
+        fun onSaveButtonClick(dialog:AddJokeDialog)
     }
 }

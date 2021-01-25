@@ -5,16 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.paxfultesttask.data.models.Joke
 import com.example.paxfultesttask.R
+import com.example.paxfultesttask.utils.JokesDiffUtil
 import kotlinx.android.synthetic.main.joke_item.view.*
 
-class JokesListAdapter() :
+class JokesListAdapter(private val onClick:OnButtonClickListener) :
     RecyclerView.Adapter<JokesListAdapter.JokeViewHolder>() {
 
     private var jokesList: List<Joke> = emptyList()
-    var onButtonClickListener:OnButtonClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder =
         JokeViewHolder(
@@ -28,11 +29,11 @@ class JokesListAdapter() :
         holder.jokeText.text = jokesList[position].joke
 
         holder.likeButton.setOnClickListener {
-            onButtonClickListener?.onLikeButtonClick(jokesList[position])
+            onClick.onLikeButtonClick(jokesList[position])
         }
 
         holder.shareButton.setOnClickListener {
-            onButtonClickListener?.onShareButtonClick(holder.jokeText.text.toString())
+            onClick.onShareButtonClick(holder.jokeText.text.toString())
         }
     }
 
@@ -48,7 +49,9 @@ class JokesListAdapter() :
     }
 
     fun newList(list: List<Joke>){
+        val diffs = JokesDiffUtil(jokesList,list)
+        val result = DiffUtil.calculateDiff(diffs)
         jokesList = list
-        this.notifyDataSetChanged()
+        result.dispatchUpdatesTo(this)
     }
 }

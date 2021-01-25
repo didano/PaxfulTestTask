@@ -1,9 +1,7 @@
 package com.example.paxfultesttask.domain.database
 
-import androidx.room.Dao
-import androidx.room.Insert
+import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
-import androidx.room.Query
 import com.example.paxfultesttask.data.models.Joke
 
 @Dao
@@ -17,4 +15,11 @@ interface JokesDao {
 
     @Query("SELECT * FROM jokes_table ORDER BY RANDOM() LIMIT 1")
     suspend fun getRandomJoke(): List<Joke>
+
+    @Query("SELECT * FROM jokes_table WHERE liked > 0")
+    suspend fun getAllLikedJokes(): List<Joke>
+
+    @Update
+    suspend fun updateJoke(joke:Joke)
+
 }

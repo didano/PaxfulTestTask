@@ -6,8 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.SmallTest
 import com.example.paxfultesttask.domain.database.JokesDatabase
-import com.example.paxfultesttask.domain.database.MyJokesDao
-import com.example.paxfultesttask.data.models.MyJoke
 import com.google.common.truth.Truth
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runBlockingTest

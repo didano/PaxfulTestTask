@@ -6,11 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.paxfultesttask.data.models.Joke
 import com.example.paxfultesttask.data.models.JokesPreferences
-import com.example.paxfultesttask.data.models.MyJoke
 
 
 @Database(
-    entities = [Joke::class, MyJoke::class, JokesPreferences::class],
+    entities = [Joke::class, JokesPreferences::class],
     version = 1,
     exportSchema = false
 )
@@ -31,6 +30,5 @@ abstract class JokesDatabase:RoomDatabase() {
     }
 
     abstract fun jokesDao(): JokesDao
-    abstract fun myJokesDao(): MyJokesDao
     abstract fun myPrefsDao(): PrefsDao
 }

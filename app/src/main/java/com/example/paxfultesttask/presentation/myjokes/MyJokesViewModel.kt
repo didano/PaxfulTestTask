@@ -4,33 +4,40 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.paxfultesttask.data.models.MyJoke
-import com.example.paxfultesttask.domain.interactors.db.IJokeDbInteractor
+import com.example.paxfultesttask.data.models.Joke
+import com.example.paxfultesttask.domain.interactors.db.IJokesInteractor
+import com.example.paxfultesttask.utils.asImmutable
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 
 
-class MyJokesViewModel(val dbInteractor: IJokeDbInteractor) : ViewModel() {
-    val myJokesLiveData = MutableLiveData<List<MyJoke>>()
+class MyJokesViewModel(val interactor: IJokesInteractor) : ViewModel() {
+    private val _myJokesLiveData = MutableLiveData<List<Joke>>()
+    val myJokesLiveData = _myJokesLiveData.asImmutable()
 
-    fun fillMyJokesLiveData() {
+    init {
+        fillMyJokesData()
+    }
+
+    fun fillMyJokesData() {
         viewModelScope.launch(IO) {
-            val result = dbInteractor.getAllMyJokes()
-            myJokesLiveData.postValue(result)
+            Log.d("MYJOKESINIT",interactor.getAllLikedJokes().toString())
+            _myJokesLiveData.postValue(interactor.getAllLikedJokes())
         }
     }
 
-    fun saveMyJoke(myJoke: MyJoke) {
+    fun saveMyJoke(myJoke: Joke) {
         viewModelScope.launch(IO) {
-            dbInteractor.addOwnJoke(myJoke)
-            myJokesLiveData.postValue(dbInteractor.getAllMyJokes())
+            interactor.likeJoke(myJoke)
+            _myJokesLiveData.postValue(interactor.getAllLikedJokes())
+            Log.d("MYJOKES",interactor.getAllLikedJokes().toString())
         }
     }
 
-    fun deleteMyJoke(myJoke: MyJoke) {
+    fun deleteMyJoke(myJoke: Joke) {
         viewModelScope.launch(IO) {
-            dbInteractor.deleteMyJoke(myJoke)
-            myJokesLiveData.postValue(dbInteractor.getAllMyJokes())
+            interactor.deleteJokeFromLiked(myJoke)
+            _myJokesLiveData.postValue(interactor.getAllLikedJokes())
         }
     }
 }

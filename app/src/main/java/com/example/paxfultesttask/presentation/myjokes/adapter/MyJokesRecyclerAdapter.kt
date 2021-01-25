@@ -5,17 +5,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.paxfultesttask.data.models.MyJoke
 import com.example.paxfultesttask.R
+import com.example.paxfultesttask.data.models.Joke
+import com.example.paxfultesttask.presentation.jokeslist.adapter.JokesListAdapter
+import com.example.paxfultesttask.utils.JokesDiffUtil
 import kotlinx.android.synthetic.main.joke_item.view.jokeText
 import kotlinx.android.synthetic.main.myjoke_item.view.*
 
-class MyJokesRecyclerAdapter : RecyclerView.Adapter<MyJokesRecyclerAdapter.MyJokeViewHolder>() {
+class MyJokesRecyclerAdapter(private val onClick: OnDeleteButtonClickListener) :
+    RecyclerView.Adapter<MyJokesRecyclerAdapter.MyJokeViewHolder>() {
 
-    private var myJokesList: List<MyJoke> = emptyList()
-    var onButtonClickListener: OnDeleteButtonClickListener? = null
-
+    private var myJokesList: List<Joke> = emptyList()
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -33,20 +35,21 @@ class MyJokesRecyclerAdapter : RecyclerView.Adapter<MyJokesRecyclerAdapter.MyJok
     }
 
     interface OnDeleteButtonClickListener {
-        fun onDeleteButtonClicked(myJoke: MyJoke)
+        fun onDeleteButtonClicked(likedJoke: Joke)
     }
 
     override fun onBindViewHolder(holder: MyJokeViewHolder, position: Int) {
         holder.jokeText.text = myJokesList[position].joke
 
         holder.deleteButton.setOnClickListener {
-            onButtonClickListener?.onDeleteButtonClicked(myJokesList[position])
+            onClick.onDeleteButtonClicked(myJokesList[position])
         }
     }
 
-    fun newList(list:List<MyJoke>){
+    fun newList(list: List<Joke>) {
+        val diffs = JokesDiffUtil(myJokesList,list)
+        val result = DiffUtil.calculateDiff(diffs)
         myJokesList = list
-        notifyDataSetChanged()
+        result.dispatchUpdatesTo(this)
     }
-
 }

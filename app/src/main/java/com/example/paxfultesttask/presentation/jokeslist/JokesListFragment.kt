@@ -1,52 +1,39 @@
 package com.example.paxfultesttask.presentation.jokeslist
 
-import android.content.Context
-import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.paxfultesttask.R
 import com.example.paxfultesttask.data.models.Joke
+import com.example.paxfultesttask.presentation.base.BaseFragment
 import com.example.paxfultesttask.presentation.jokeslist.adapter.JokesListAdapter
+import com.example.paxfultesttask.utils.JokesDiffUtil
+import com.example.paxfultesttask.utils.ShakeDetectionUtil
+import com.example.paxfultesttask.utils.sendShareIntent
+import com.example.paxfultesttask.utils.showToast
+import com.squareup.seismic.ShakeDetector
 import kotlinx.android.synthetic.main.jokes_list_fragment.*
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class JokesListFragment : Fragment() {
+class JokesListFragment : BaseFragment(), ShakeDetector.Listener {
 
-    private lateinit var sensorManager: SensorManager
-    private lateinit var sensorListener: SensorEventListener
-    private var accelValue: Float = SensorManager.GRAVITY_EARTH
-    private var accelLast: Float = SensorManager.GRAVITY_EARTH
-    private var shake: Float = 0.0f
     private val jokesAdapter: JokesListAdapter by lazy {
-        JokesListAdapter()
+        JokesListAdapter(object :JokesListAdapter.OnButtonClickListener {
+            override fun onShareButtonClick(jokeText: String) {
+                requireContext().sendShareIntent(jokeText)
+            }
+            override fun onLikeButtonClick(joke: Joke) {
+                vm.likeJoke(joke)
+            }
+        })
     }
 
+    private val shakeDetector: ShakeDetectionUtil by inject()
     val vm: JokesListViewModel by viewModel()
-
-    private val observer = Observer<List<Joke>> {
-
-        jokesAdapter.newList(it)
-    }
-
-    private val refreshObserver = Observer<Boolean> {
-        if (it == true) {
-            jokesRecyclerView.visibility = View.VISIBLE
-            progressBar.visibility = View.GONE
-        } else {
-            progressBar.visibility = View.VISIBLE
-            jokesRecyclerView.visibility = View.INVISIBLE
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,74 +42,54 @@ class JokesListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        vm.jokeTextLiveData.observe(viewLifecycleOwner, observer)
-        vm.isRefreshed.observe(viewLifecycleOwner, refreshObserver)
-        registerShakeListener()
-        initClickListener()
         jokesRecyclerView.apply {
             adapter = jokesAdapter
             layoutManager = LinearLayoutManager(context)
         }
+        shakeDetector.init(this)
     }
 
-    private fun initClickListener() {
-        jokesAdapter.onButtonClickListener = object : JokesListAdapter.OnButtonClickListener {
-            override fun onShareButtonClick(jokeText: String) {
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, jokeText)
-                    type = "text/plain"
-                }
-                val shareIntent = Intent.createChooser(intent, "Share with friend: ")
-                startActivity(shareIntent)
-            }
+    override fun observeViewModel() {
+        vm.isShakeEnabled.observe(this){
+            enableShake(it)
+        }
 
-            override fun onLikeButtonClick(joke: Joke) {
-                vm.likeJoke(joke)
-                Toast.makeText(requireContext(), "Added to MyJokes", Toast.LENGTH_SHORT).show()
-            }
+        vm.jokeTextMutable.observe(this){
+            jokesAdapter.newList(it)
+        }
 
+        vm.jokeLiked.observe(this){
+            requireContext().showToast("Joke added to favorites")
+        }
+
+        vm.isRefreshed.observe(this){
+            if(it){
+                progressBar.visibility = View.GONE
+            } else {
+                progressBar.visibility = View.VISIBLE
+            }
         }
     }
 
-    private fun registerShakeListener() {
-        sensorListener = object : SensorEventListener {
-            override fun onSensorChanged(event: SensorEvent?) {
-                val x = event?.let {
-                    it.values[0]
-                }
-                val y = event?.let {
-                    it.values[1]
-                }
-                val z = event?.let {
-                    it.values[2]
-                }
-                accelLast = accelValue
-                accelValue =
-                    Math.sqrt((x!!.times(x) + y!!.times(y) + z!!.times(z)).toDouble()).toFloat()
-                val delta = accelValue - accelLast
-                shake = shake * 0.9f + delta
-                if (vm.needToRefresh && shake > 8) {
-                    vm.checkOfflineMode()
-                } else if (!vm.needToRefresh && shake > 8) {
-                    vm.getRandomJoke()
-                }
-            }
-
-            override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+    private fun enableShake(enable: Boolean) {
+        if(enable){
+            shakeDetector.start()
+        } else {
+            shakeDetector.stop()
         }
-        sensorManager =
-            (requireActivity().getSystemService(Context.SENSOR_SERVICE)) as SensorManager
-        sensorManager.registerListener(
-            sensorListener,
-            sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-            SensorManager.SENSOR_DELAY_NORMAL
-        )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        shakeDetector.stop()
     }
 
     override fun onResume() {
         activity?.title = "Jokes List"
         super.onResume()
-        vm.checkOfflineMode()
+    }
+
+    override fun hearShake() {
+        vm.onShakeAction()
     }
 }

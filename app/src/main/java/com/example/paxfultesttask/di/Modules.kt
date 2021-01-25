@@ -3,13 +3,12 @@ package com.example.paxfultesttask.di
 import com.example.paxfultesttask.data.repositories.*
 import com.example.paxfultesttask.domain.api.IcndbApiFactory
 import com.example.paxfultesttask.domain.database.JokesDatabase
-import com.example.paxfultesttask.domain.interactors.api.ApiInteractor
-import com.example.paxfultesttask.domain.interactors.api.IApiInteractor
-import com.example.paxfultesttask.domain.interactors.db.IJokeDbInteractor
-import com.example.paxfultesttask.domain.interactors.db.JokeDbInteractor
+import com.example.paxfultesttask.domain.interactors.db.IJokesInteractor
+import com.example.paxfultesttask.domain.interactors.db.JokesInteractor
 import com.example.paxfultesttask.presentation.jokeslist.JokesListViewModel
 import com.example.paxfultesttask.presentation.myjokes.MyJokesViewModel
 import com.example.paxfultesttask.presentation.settings.SettingsViewModel
+import com.example.paxfultesttask.utils.ShakeDetectionUtil
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -32,16 +31,12 @@ val appModule = module {
         JokesDbRepository(androidContext())
     }
 
-    single<IMyJokesDbRepository> {
-        MyJokesDbRepository(androidContext())
+    factory {
+        ShakeDetectionUtil(get())
     }
 
-    single<IJokeDbInteractor> {
-        JokeDbInteractor(get(),get(),get())
-    }
-
-    single<IApiInteractor> {
-        ApiInteractor(get())
+    single<IJokesInteractor>{
+        JokesInteractor(get(),get(),get())
     }
 
     single {
@@ -49,7 +44,7 @@ val appModule = module {
     }
 
 
-    viewModel { JokesListViewModel(get(),get()) }
+    viewModel { JokesListViewModel(get()) }
     viewModel { MyJokesViewModel(get()) }
     viewModel { SettingsViewModel(get()) }
 

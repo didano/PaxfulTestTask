@@ -4,11 +4,12 @@ import android.content.Context
 import com.example.paxfultesttask.data.models.JokesPreferences
 import com.example.paxfultesttask.domain.database.JokesDatabase
 
-class PrefsRepository(val context: Context):IPrefsRepository {
+class PrefsRepository(val context: Context) : IPrefsRepository {
 
     val db = JokesDatabase.getInstance(context).myPrefsDao()
-    override suspend fun getPreferences(): JokesPreferences? {
-        return db.getPrefs()
+
+    override suspend fun getPreferences(): JokesPreferences {
+        return db.getPrefs() ?: JokesPreferences()
     }
 
     override suspend fun writePreferences(prefs: JokesPreferences) {
@@ -20,7 +21,7 @@ class PrefsRepository(val context: Context):IPrefsRepository {
     }
 
     override suspend fun getLastName(): String {
-        return db.getLastName()
+        return db.getLastName() ?: "Norris"
     }
 
     override suspend fun writeFirstName(firstName: String) {
@@ -28,15 +29,13 @@ class PrefsRepository(val context: Context):IPrefsRepository {
     }
 
     override suspend fun getFirstName(): String {
-        return db.getFirstName()
+        return db.getFirstName() ?: "Chuck"
     }
 
-    override suspend fun writeOfflineMode(mode: Int) {
+    override suspend fun writeOfflineMode(mode: Boolean) {
         db.setOfflineMod(mode)
     }
 
-    override suspend fun getOfflineMode(): Int {
-        return db.getOfflineMod()
-    }
+    override suspend fun getOfflineMode(): Boolean = db.getOfflineMod() ?: false
 
 }
