@@ -4,7 +4,7 @@ import android.content.Context
 import android.hardware.SensorManager
 import com.squareup.seismic.ShakeDetector
 
-class ShakeDetectionUtil(private val context: Context){
+class ShakeDetectionUtil(private val context: Context) {
     private var detector: ShakeDetector? = null
     private var sensorManager: SensorManager? = null
 

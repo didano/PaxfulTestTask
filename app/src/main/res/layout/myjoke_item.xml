@@ -29,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small_layout_margin"
-            android:background="@null"
+            android:background="?selectableItemBackground"
             android:textAllCaps="false"
             android:text="@string/delete"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -1,15 +1,12 @@
 package com.example.paxfultesttask.presentation.settings
 
 import android.os.Bundle
-import android.text.SpannableStringBuilder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.observe
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.data.models.JokesPreferences
 import com.example.paxfultesttask.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_settings.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -18,8 +15,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class SettingsFragment : BaseFragment() {
 
     private val vm: SettingsViewModel by viewModel()
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,26 +28,18 @@ class SettingsFragment : BaseFragment() {
     }
 
     override fun observeViewModel() {
-        vm.jokePrefsFirstName.observe(this){
-            Log.d("SETTINGSFirst",it.toString())
+        vm.jokePrefsFirstName.observe(this) {
             charFirstName.setText(it)
         }
 
-        vm.jokePrefsLastName.observe(this){
-            Log.d("SETTINGSLast",it.toString())
+        vm.jokePrefsLastName.observe(this) {
             charLastName.setText(it)
         }
 
-        vm.isOffline.observe(this){
+        vm.isOffline.observe(this) {
             switchOfflineMode.isChecked = it
         }
     }
-
-//    private fun fillFields(preferences: JokesPreferences) {
-//        charFirstName.text = SpannableStringBuilder(preferences.firstName)
-//        charLastName.text = SpannableStringBuilder(preferences.lastName)
-//        switchOfflineMode.isChecked = preferences.offlineMode
-//    }
 
     private fun initListeners() {
         charFirstName.doOnTextChanged { text, _, _, _ ->

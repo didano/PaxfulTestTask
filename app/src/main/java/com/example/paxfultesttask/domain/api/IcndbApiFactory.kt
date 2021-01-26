@@ -24,6 +24,6 @@ class IcndbApiFactory {
             return retrofit.create(IcndbApiService::class.java)
         }
 
-        fun getInstance(): IcndbApiService = (instance ?: create()).also { instance =it}
+        fun getInstance(): IcndbApiService = (instance ?: create()).also { instance = it }
     }
 }

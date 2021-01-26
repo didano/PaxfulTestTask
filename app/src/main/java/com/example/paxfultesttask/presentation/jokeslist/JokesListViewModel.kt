@@ -1,12 +1,11 @@
 package com.example.paxfultesttask.presentation.jokeslist
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.paxfultesttask.core.SingleLiveEvent
 import com.example.paxfultesttask.data.models.Joke
-import com.example.paxfultesttask.domain.interactors.db.IJokesInteractor
+import com.example.paxfultesttask.domain.interactors.IJokesInteractor
 import com.example.paxfultesttask.utils.asImmutable
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
@@ -28,20 +27,32 @@ class JokesListViewModel(
     private val _isRefreshed = MutableLiveData<Boolean>()
     val isRefreshed = _isRefreshed.asImmutable()
 
+    private val _swipeRefreshed = MutableLiveData<Boolean>()
+    val swipeRefreshed = _swipeRefreshed.asImmutable()
+
     init {
         initData()
     }
 
-    fun initData(){
+    fun initData() {
         viewModelScope.launch(IO) {
             _isRefreshed.postValue(false)
+            _swipeRefreshed.postValue(false)
             val name = interactor.getFirstName()
             val lastName = interactor.getLastName()
-            val offlineMode = interactor.getOfflineMode()
-            Log.d("PREFS","$name $lastName $offlineMode")
             _isShakeEnabled.postValue(true)
-            _jokeTextMutable.postValue(interactor.getAllJokesApi(name,lastName))
+            _jokeTextMutable.postValue(interactor.getAllJokesApi(
+                if (name.isNullOrBlank()) {
+                    "Chuck"
+                } else {
+                    name
+                }, if (lastName.isNullOrBlank()) {
+                    "Norris"
+                } else {
+                    lastName
+                }))
             _isRefreshed.postValue(true)
+            _swipeRefreshed.postValue(true)
         }
     }
 
@@ -49,7 +60,6 @@ class JokesListViewModel(
         viewModelScope.launch(IO) {
             interactor.likeJoke(joke)
             _jokeLiked.postCall()
-            Log.d("MYJOKESLIST",interactor.getAllLikedJokes().toString())
         }
     }
 
@@ -57,12 +67,20 @@ class JokesListViewModel(
         viewModelScope.launch(IO) {
             val name = interactor.getFirstName()
             val lastName = interactor.getLastName()
-            Log.d("Offline","HERE")
             _isRefreshed.postValue(false)
-            if(interactor.getOfflineMode()){
+            if (interactor.getOfflineMode()) {
                 _jokeTextMutable.postValue(interactor.getRandomJoke())
             } else {
-                _jokeTextMutable.postValue(interactor.getAllJokesApi(name,lastName))
+                _jokeTextMutable.postValue(interactor.getAllJokesApi(
+                    if (name.isNullOrBlank()) {
+                        "Chuck"
+                    } else {
+                        name
+                    }, if (lastName.isNullOrBlank()) {
+                        "Norris"
+                    } else {
+                        lastName
+                    }))
             }
             _isRefreshed.postValue(true)
         }

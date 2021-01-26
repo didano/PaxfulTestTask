@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PaxfulTestTask</string>
+    <string name="first_fragment_name">Jokes List</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_main2">MainActivity</string>
@@ -24,4 +25,8 @@
     <string name="_120">/120</string>
     <string name="_0">0</string>
     <string name="add_new_joke">Add new joke</string>
+    <string name="my_jokes_frag_title">My Jokes</string>
+    <string name="settings_frag_title">Settings Fragment</string>
+    <string name="jokes_list_frag_title">Jokes List</string>
+    <string name="jokes_added_toast">Joke added to favorites</string>
 </resources>

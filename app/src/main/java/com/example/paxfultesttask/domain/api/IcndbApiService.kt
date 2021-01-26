@@ -6,7 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 
-
 interface IcndbApiService {
     @GET("jokes/")
     suspend fun getJokes(): Response<JokeResponse>
@@ -14,5 +13,6 @@ interface IcndbApiService {
     @GET("jokes/")
     suspend fun getNamedJokes(
         @Query("firstName") name: String,
-        @Query("lastName") surname: String): Response<JokeResponse>
+        @Query("lastName") surname: String
+    ): Response<JokeResponse>
 }

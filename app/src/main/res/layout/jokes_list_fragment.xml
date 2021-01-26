@@ -11,10 +11,18 @@
         android:layout_gravity="center"
         android:indeterminateTint="@color/purple_500" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/jokesRecyclerView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity" />
+        android:id="@+id/swipeLayout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/jokesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </FrameLayout>

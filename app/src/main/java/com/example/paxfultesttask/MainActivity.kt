@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.fragment.findNavController
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -15,8 +14,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        title = "Jokes List"
         toggle = ActionBarDrawerToggle(
             this,
             root,
@@ -30,21 +27,24 @@ class MainActivity : AppCompatActivity() {
             when (it.itemId) {
                 R.id.navMyJokes -> {
                     fragment.findNavController().navigate(R.id.action_global_myJokesFragment)
-                    title = "My Jokes"
+                    title = getString(R.string.my_jokes_frag_title)
                     root.close()
                 }
                 R.id.navSettings -> {
                     fragment.findNavController().navigate(R.id.action_global_settingsFragment)
-                    title = "Settings Fragment"
+                    title = getString(R.string.settings_frag_title)
                     root.close()
                 }
                 R.id.navHome -> {
                     fragment.findNavController().navigate(R.id.action_global_jokesListFragment)
-                    title = "Jokes List"
+                    title = getString(R.string.jokes_list_frag_title)
                     root.close()
                 }
             }
             return@setNavigationItemSelectedListener true
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            window.statusBarColor = getColor(R.color.dark_purple)
         }
     }
 

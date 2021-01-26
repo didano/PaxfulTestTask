@@ -18,12 +18,12 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MyJokesFragment : BaseFragment() {
 
+    val vm: MyJokesViewModel by viewModel()
+
     private val myJokesAdapter by lazy {
-        MyJokesRecyclerAdapter(object : MyJokesRecyclerAdapter.OnDeleteButtonClickListener {
-            override fun onDeleteButtonClicked(likedJoke: Joke) {
-                vm.deleteMyJoke(likedJoke)
-            }
-        })
+        MyJokesRecyclerAdapter {
+            vm.deleteMyJoke(it)
+        }
     }
 
     private val dialog by lazy {
@@ -40,16 +40,14 @@ class MyJokesFragment : BaseFragment() {
         })
     }
 
-    val vm: MyJokesViewModel by viewModel()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_my_jokes, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_my_jokes, container, false)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         myJokesRecyclerView.apply {
             adapter = myJokesAdapter
             layoutManager = LinearLayoutManager(context)
@@ -60,9 +58,8 @@ class MyJokesFragment : BaseFragment() {
     }
 
     override fun observeViewModel() {
-        vm.myJokesLiveData.observe(this){
+        vm.myJokesLiveData.observe(this) {
             myJokesAdapter.newList(it)
         }
     }
-
 }

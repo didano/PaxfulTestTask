@@ -10,7 +10,6 @@ import com.example.paxfultesttask.R
 import com.example.paxfultesttask.data.models.Joke
 import com.example.paxfultesttask.presentation.base.BaseFragment
 import com.example.paxfultesttask.presentation.jokeslist.adapter.JokesListAdapter
-import com.example.paxfultesttask.utils.JokesDiffUtil
 import com.example.paxfultesttask.utils.ShakeDetectionUtil
 import com.example.paxfultesttask.utils.sendShareIntent
 import com.example.paxfultesttask.utils.showToast
@@ -22,10 +21,11 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class JokesListFragment : BaseFragment(), ShakeDetector.Listener {
 
     private val jokesAdapter: JokesListAdapter by lazy {
-        JokesListAdapter(object :JokesListAdapter.OnButtonClickListener {
+        JokesListAdapter(object : JokesListAdapter.OnButtonClickListener {
             override fun onShareButtonClick(jokeText: String) {
                 requireContext().sendShareIntent(jokeText)
             }
+
             override fun onLikeButtonClick(joke: Joke) {
                 vm.likeJoke(joke)
             }
@@ -33,6 +33,7 @@ class JokesListFragment : BaseFragment(), ShakeDetector.Listener {
     }
 
     private val shakeDetector: ShakeDetectionUtil by inject()
+
     val vm: JokesListViewModel by viewModel()
 
     override fun onCreateView(
@@ -47,32 +48,42 @@ class JokesListFragment : BaseFragment(), ShakeDetector.Listener {
             layoutManager = LinearLayoutManager(context)
         }
         shakeDetector.init(this)
+
+        swipeLayout.setOnRefreshListener {
+            vm.initData()
+        }
     }
 
     override fun observeViewModel() {
-        vm.isShakeEnabled.observe(this){
+        vm.isShakeEnabled.observe(this) {
             enableShake(it)
         }
 
-        vm.jokeTextMutable.observe(this){
+        vm.jokeTextMutable.observe(this) {
             jokesAdapter.newList(it)
         }
 
-        vm.jokeLiked.observe(this){
-            requireContext().showToast("Joke added to favorites")
+        vm.jokeLiked.observe(this) {
+            requireContext().showToast(getString(R.string.jokes_added_toast))
         }
 
-        vm.isRefreshed.observe(this){
-            if(it){
+        vm.isRefreshed.observe(this) {
+            if (it) {
                 progressBar.visibility = View.GONE
             } else {
                 progressBar.visibility = View.VISIBLE
             }
         }
+
+        vm.swipeRefreshed.observe(this) {
+            if (it) {
+                swipeLayout.isRefreshing = false
+            }
+        }
     }
 
     private fun enableShake(enable: Boolean) {
-        if(enable){
+        if (enable) {
             shakeDetector.start()
         } else {
             shakeDetector.stop()
@@ -85,8 +96,8 @@ class JokesListFragment : BaseFragment(), ShakeDetector.Listener {
     }
 
     override fun onResume() {
-        activity?.title = "Jokes List"
         super.onResume()
+        activity?.title = "Jokes List"
     }
 
     override fun hearShake() {

@@ -6,10 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Window
-import android.widget.Toast
 import com.example.paxfultesttask.R
-import com.example.paxfultesttask.data.models.Joke
-import com.example.paxfultesttask.presentation.myjokes.adapter.MyJokesRecyclerAdapter
 import kotlinx.android.synthetic.main.custom_dialog.*
 
 class AddJokeDialog(
@@ -35,7 +32,6 @@ class AddJokeDialog(
 
             override fun afterTextChanged(s: Editable?) {
             }
-
         }
 
         dialogEditText.addTextChangedListener(textWatcher)
@@ -46,7 +42,7 @@ class AddJokeDialog(
     }
 
     interface OnDialogButtonClickListener {
-        fun onCancelButtonClick(dialog:AddJokeDialog)
-        fun onSaveButtonClick(dialog:AddJokeDialog)
+        fun onCancelButtonClick(dialog: AddJokeDialog)
+        fun onSaveButtonClick(dialog: AddJokeDialog)
     }
 }

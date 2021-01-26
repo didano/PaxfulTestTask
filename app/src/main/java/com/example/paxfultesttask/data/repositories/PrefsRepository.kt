@@ -16,20 +16,20 @@ class PrefsRepository(val context: Context) : IPrefsRepository {
         db.changePref(prefs)
     }
 
-    override suspend fun writeLastName(lastName: String) {
-        db.setLastName(lastName)
+    override suspend fun writeLastName(lastName: String?) {
+        db.setLastName(lastName?:"Norris")
     }
 
-    override suspend fun getLastName(): String {
-        return db.getLastName() ?: "Norris"
+    override suspend fun getLastName(): String? {
+        return db.getLastName()
     }
 
-    override suspend fun writeFirstName(firstName: String) {
-        db.setFirstName(firstName)
+    override suspend fun writeFirstName(firstName: String?) {
+        db.setFirstName(firstName?:"Chuck")
     }
 
-    override suspend fun getFirstName(): String {
-        return db.getFirstName() ?: "Chuck"
+    override suspend fun getFirstName(): String? {
+        return db.getFirstName()
     }
 
     override suspend fun writeOfflineMode(mode: Boolean) {
