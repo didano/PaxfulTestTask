@@ -7,6 +7,7 @@ import retrofit2.http.Query
 
 
 interface IcndbApiService {
+
     @GET("jokes/")
     suspend fun getJokes(): Response<JokeResponse>
 

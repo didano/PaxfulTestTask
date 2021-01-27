@@ -30,6 +30,7 @@ class JokesInteractor(
     }
 
     override suspend fun likeJoke(joke: Joke) {
+        joke.isLiked = true
         jokesDbRepository.addLikedJoke(joke)
     }
 
@@ -42,8 +43,9 @@ class JokesInteractor(
         }
     }
 
-    override suspend fun deleteJokeFromLiked(joke: Joke) {
-        jokesDbRepository.deleteLikedJoke(joke)
+    override suspend fun dislikeJokeInteractor(joke: Joke) {
+        joke.isLiked = false
+        jokesDbRepository.dislikeJokeRepo(joke)
     }
 
     override suspend fun writeFirstName(firstName: String?) {
@@ -79,34 +81,43 @@ class JokesInteractor(
     override suspend fun getOfflineMode(): Boolean =
         prefsDbRepository.getOfflineMode()
 
-    override suspend fun getAllJokesApi(
-        firstName: String?,
-        lastName: String?
-    ): List<Joke> {
-        return if (prefsDbRepository.getOfflineMode()) {
-            val result = jokesDbRepository.getAllJokes()
-            for (element in result) {
-                element.joke = element.joke.replaceDefaultNameToCustom(firstName, lastName)
-            }
-            result
+    override suspend fun getAllJokesApi(): List<Joke> {
+        val nameFromPrefs = prefsDbRepository.getFirstName()
+        val lastNameFromPrefs = prefsDbRepository.getLastName()
+        if (prefsDbRepository.getOfflineMode()) {
+            return getAllJokesFromDb()
         } else {
-            val response = apiRepository.getNamedJokes(firstName ?: "Chuck", lastName ?: "Norris")
+            val response = apiRepository.getNamedJokes(nameFromPrefs ?: "Chuck", lastNameFromPrefs ?: "Norris")
             when (response) {
                 is ApiRepository.ResultWrapper.Success -> {
                     val toDbList = response.value.value
                     val toViewList = ArrayList(toDbList.map { it.copy() })
                     val likedJokesIds = jokesDbRepository.getLikedJokes().map { it.id }
                     toDbList.map {
-                        it.joke = it.joke.replaceCustomNameToDefault(firstName, lastName)
+                        it.joke = it.joke.replaceCustomNameToDefault(nameFromPrefs, lastNameFromPrefs)
                         if (likedJokesIds.contains(it.id)) {
                             it.isLiked = true
                         }
                         jokesDbRepository.addJoke(it)
                     }
-                    toViewList
+                    return toViewList
                 }
-                else -> emptyList()
+                is ApiRepository.ResultWrapper.GenericError -> {
+                    return listOf(Joke(errorText = response.error?.error_description))
+                }
+                else ->
+                    return listOf(Joke(errorText = "Something went wrong. Check connection and refresh page."))
             }
         }
+    }
+
+    override suspend fun getAllJokesFromDb(): List<Joke> {
+        val nameFromPrefs = prefsDbRepository.getFirstName()
+        val lastNameFromPrefs = prefsDbRepository.getLastName()
+        val result =jokesDbRepository.getAllJokes()
+        for (element in result) {
+            element.joke = element.joke.replaceDefaultNameToCustom(nameFromPrefs, lastNameFromPrefs)
+        }
+        return result
     }
 }

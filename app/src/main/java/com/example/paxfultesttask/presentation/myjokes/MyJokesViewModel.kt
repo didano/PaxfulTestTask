@@ -3,6 +3,7 @@ package com.example.paxfultesttask.presentation.myjokes
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.paxfultesttask.core.SingleLiveEvent
 import com.example.paxfultesttask.data.models.Joke
 import com.example.paxfultesttask.domain.interactors.IJokesInteractor
 import com.example.paxfultesttask.utils.asImmutable
@@ -17,6 +18,9 @@ class MyJokesViewModel(
     private val _myJokesLiveData = MutableLiveData<List<Joke>>()
     val myJokesLiveData = _myJokesLiveData.asImmutable()
 
+    private val _needToShowDialog = SingleLiveEvent<Unit>()
+    val needToShowDialog = _needToShowDialog.asImmutable()
+
     init {
         initMyJokesData()
     }
@@ -27,6 +31,10 @@ class MyJokesViewModel(
         }
     }
 
+    fun showDialog() {
+        _needToShowDialog.postCall()
+    }
+
     fun saveMyJoke(myJoke: Joke) {
         viewModelScope.launch(IO) {
             interactor.likeJoke(myJoke)
@@ -34,9 +42,9 @@ class MyJokesViewModel(
         }
     }
 
-    fun deleteMyJoke(myJoke: Joke) {
+    fun dislikeJoke(myJoke: Joke) {
         viewModelScope.launch(IO) {
-            interactor.deleteJokeFromLiked(myJoke)
+            interactor.dislikeJokeInteractor(myJoke)
             _myJokesLiveData.postValue(interactor.getAllLikedJokes())
         }
     }

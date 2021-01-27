@@ -28,16 +28,18 @@ class SettingsFragment : BaseFragment() {
     }
 
     override fun observeViewModel() {
-        vm.jokePrefsFirstName.observe(this) {
-            charFirstName.setText(it)
-        }
+        vm.apply {
+            jokePrefsFirstName.observe(this@SettingsFragment) {
+                charFirstName.setText(it)
+            }
 
-        vm.jokePrefsLastName.observe(this) {
-            charLastName.setText(it)
-        }
+            jokePrefsLastName.observe(this@SettingsFragment) {
+                charLastName.setText(it)
+            }
 
-        vm.isOffline.observe(this) {
-            switchOfflineMode.isChecked = it
+            isOffline.observe(this@SettingsFragment) {
+                switchOfflineMode.isChecked = it
+            }
         }
     }
 

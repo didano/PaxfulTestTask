@@ -52,41 +52,37 @@ class JokesListFragment : BaseFragment(), ShakeDetector.Listener {
         swipeLayout.setOnRefreshListener {
             vm.initData()
         }
+
+        shakeDetector.start()
     }
 
     override fun observeViewModel() {
-        vm.isShakeEnabled.observe(this) {
-            enableShake(it)
-        }
+        vm.apply {
 
-        vm.jokeTextMutable.observe(this) {
-            jokesAdapter.newList(it)
-        }
-
-        vm.jokeLiked.observe(this) {
-            requireContext().showToast(getString(R.string.jokes_added_toast))
-        }
-
-        vm.isRefreshed.observe(this) {
-            if (it) {
-                progressBar.visibility = View.GONE
-            } else {
-                progressBar.visibility = View.VISIBLE
+            jokeTextMutable.observe(this@JokesListFragment) {
+                jokesAdapter.newList(it)
             }
-        }
 
-        vm.swipeRefreshed.observe(this) {
-            if (it) {
-                swipeLayout.isRefreshing = false
+            jokeLiked.observe(this@JokesListFragment) {
+                requireContext().showToast(getString(R.string.jokes_added_toast))
             }
-        }
-    }
 
-    private fun enableShake(enable: Boolean) {
-        if (enable) {
-            shakeDetector.start()
-        } else {
-            shakeDetector.stop()
+            isRefreshed.observe(this@JokesListFragment) {
+                if (it) {
+                    progressBar.visibility = View.GONE
+                    swipeLayout.isRefreshing = false
+                } else {
+                    progressBar.visibility = View.VISIBLE
+                }
+            }
+
+            changeFragmentTitle.observe(this@JokesListFragment) {
+                requireActivity().title = it
+            }
+
+            showErrorToast.observe(this@JokesListFragment){
+                requireContext().showToast(it)
+            }
         }
     }
 
@@ -97,7 +93,7 @@ class JokesListFragment : BaseFragment(), ShakeDetector.Listener {
 
     override fun onResume() {
         super.onResume()
-        activity?.title = "Jokes List"
+        vm.changeTitle("Jokes List")
     }
 
     override fun hearShake() {

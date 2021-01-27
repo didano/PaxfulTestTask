@@ -3,9 +3,8 @@ package com.example.paxfultesttask.presentation
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Window
+import androidx.core.widget.doAfterTextChanged
 import com.example.paxfultesttask.R
 import kotlinx.android.synthetic.main.custom_dialog.*
 
@@ -22,19 +21,9 @@ class AddJokeDialog(
             clickListener.onCancelButtonClick(this)
         }
 
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                currentSymbols.setText(s?.length.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
+        dialogEditText.doAfterTextChanged {
+            currentSymbols.text = it?.length.toString()
         }
-
-        dialogEditText.addTextChangedListener(textWatcher)
 
         saveButton.setOnClickListener {
             clickListener.onSaveButtonClick(this)

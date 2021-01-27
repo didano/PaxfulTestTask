@@ -1,7 +1,6 @@
 package com.example.paxfultesttask.data.repositories
 
 import android.content.Context
-import android.util.Log
 import com.example.paxfultesttask.data.models.Joke
 import com.example.paxfultesttask.domain.database.JokesDatabase
 
@@ -22,7 +21,6 @@ class JokesDbRepository(val context: Context) : IJokesDbRepository {
     }
 
     override suspend fun addLikedJoke(joke: Joke) {
-        joke.isLiked = true
         db.addJoke(joke)
     }
 
@@ -30,8 +28,7 @@ class JokesDbRepository(val context: Context) : IJokesDbRepository {
         return db.getAllLikedJokes()
     }
 
-    override suspend fun deleteLikedJoke(joke: Joke) {
-        joke.isLiked = false
+    override suspend fun dislikeJokeRepo(joke: Joke) {
         db.addJoke(joke)
     }
 }

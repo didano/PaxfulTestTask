@@ -22,7 +22,7 @@ class MyJokesFragment : BaseFragment() {
 
     private val myJokesAdapter by lazy {
         MyJokesRecyclerAdapter {
-            vm.deleteMyJoke(it)
+            vm.dislikeJoke(it)
         }
     }
 
@@ -53,13 +53,19 @@ class MyJokesFragment : BaseFragment() {
             layoutManager = LinearLayoutManager(context)
         }
         createNewJoke.setOnClickListener {
-            dialog.show()
+            vm.showDialog()
         }
     }
 
     override fun observeViewModel() {
-        vm.myJokesLiveData.observe(this) {
-            myJokesAdapter.newList(it)
+        vm.apply {
+            myJokesLiveData.observe(this@MyJokesFragment) {
+                myJokesAdapter.newList(it)
+            }
+
+            needToShowDialog.observe(this@MyJokesFragment) {
+                dialog.show()
+            }
         }
     }
 }
